@@ -1,40 +1,31 @@
-import queue
-import random
-import time
-
-request_queue = queue.Queue()
-request_id_counter = 1
+import heapq
 
 
-def generate_request():
-    global request_id_counter
+def min_cost_to_connect_cables(cables):
+    # Creating a minimal heap of cable lengths
+    heapq.heapify(cables)
 
-    request = f"Request {request_id_counter}"
-    request_id_counter += 1
+    total_cost = 0
 
-    request_queue.put(request)
-    print(f"Generated and added to queue: {request}")
+    # While there is more than one cable in the pile
+    while len(cables) > 1:
+        # Pop out the two shortest cables
+        first_min = heapq.heappop(cables)
+        second_min = heapq.heappop(cables)
 
+        # The cost of connecting two shortest cables
+        cost = first_min + second_min
+        total_cost += cost
 
-def process_request():
-    if not request_queue.empty():
-        request = request_queue.get()
+        # Push a new cable back to the heap
+        heapq.heappush(cables, cost)
 
-        print(f"Processing {request}")
-        time.sleep(1)
-    else:
-        print("No requests available to process.")
+    return total_cost
 
 
 def main():
-    try:
-        while True:
-            generate_request()
-            time.sleep(random.uniform(0.5, 2))
-
-            process_request()
-    except KeyboardInterrupt:
-        print("\nExiting the program...")
+    cables = [5, 4, 3, 7, 9, 11]
+    print(f"The minimum amount of total costs: {min_cost_to_connect_cables(cables)}")
 
 
 if __name__ == "__main__":
